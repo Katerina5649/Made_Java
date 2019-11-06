@@ -3,10 +3,8 @@ package com.company.HomeWork_2;
 
 import org.junit.Assert;
 import org.junit.Test;
-
 import java.util.Collection;
 import java.util.Set;
-
 
 
 public class MyMapTest {
