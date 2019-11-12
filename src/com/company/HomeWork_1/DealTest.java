@@ -1,18 +1,18 @@
 package com.company.HomeWork_1;
 
-import org.junit.Test;
-import static org.junit.Assert.assertNull;
+
+import org.junit.jupiter.api.Test;
+
 import static org.junit.Assert.assertTrue;
 
 class DealTest {
 
     @Test
     void createDeal() {
-        assertTrue(Main.createDeal(1000, DealName.selectDealName("FX_SPOT")) instanceof FxSpot);
-        assertTrue(Main.createDeal(1000, DealName.selectDealName("BOND")) instanceof Bond);
-        assertTrue(Main.createDeal(1000, DealName.selectDealName("COMMODITY_SPOT")) instanceof CommoditySpot);
-        assertTrue(Main.createDeal(1000, DealName.selectDealName("IR_SWAP")) instanceof IrSwap);
-        assertNull(Main.createDeal(1000, DealName.selectDealName("WRONG_TYPE")));
+        assertTrue(DealName.valueOf("FX_SPOT").createDeal(100) instanceof FxSpot);
+        assertTrue(DealName.valueOf("BOND").createDeal(100) instanceof Bond);
+        assertTrue(DealName.valueOf("COMMODITY_SPOT").createDeal(100) instanceof CommoditySpot);
+        assertTrue(DealName.valueOf("IR_SWAP").createDeal(100) instanceof IrSwap);
     }
 
 
