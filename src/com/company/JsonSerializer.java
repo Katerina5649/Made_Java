@@ -3,50 +3,34 @@ package com.company;
 import java.lang.reflect.Field;
 import java.util.AbstractCollection;
 import java.util.List;
+import java.util.Map;
 
 public class JsonSerializer implements Serializer {
 
+    public StringBuilder mapToJson(Map<String, Object> map, int tabsCount){
+        StringBuilder result = new StringBuilder("");
+        StringBuilder tabs = new StringBuilder("");
+        for (int i = 0; i < tabsCount; i++ )
+            tabs.append("\t");
+        for (Map.Entry<String, Object> e : map.entrySet()) {
+            if (e.getValue() instanceof Map) {
+                result.append( e.getKey() + " : {" + "\n");
+                result.append(mapToJson((Map<String, Object>) e.getValue(), tabsCount+1));
+                result.append("}\n");
+            } else {
+                result.append(tabs  + e.getKey() + " : " + e.getValue().toString() +  "\n");
+            }
+
+        }
+        return result;
+    }
     @Override
     public StringBuilder serialize(Object o) throws IllegalAccessException {
         StringBuilder result = new StringBuilder("");
-        //-----------------------------------------
-        String firstStart = "\"";
-        String firstEnd = "\" : ";
-        String secondEnd = "\",";
-        //---------------------------------------
-        if (Serializer.isPrimitive(o))
-            return new StringBuilder(o.toString());
-        if (o instanceof AbstractCollection){
-            result.append("[ \n");
-            for (Object e : (AbstractCollection) o){
-                result.append(firstStart
-                        + serialize(e) + secondEnd + "\n");
-            }
-            result.append("]");
-            return result;
-        }
-
-        Class<?> clazz = o.getClass();
-        Field[] declaredFields = clazz.getDeclaredFields();
-        for (Field declaredField : declaredFields) {
-            //ставлю разрешение получать приватные поля
-            declaredField.setAccessible(true);
-            if (Serializer.isPrimitive(declaredField.get(o)))
-                result.append(firstStart + declaredField.getName() + firstEnd
-                        + String.valueOf(declaredField.get(o)) +  secondEnd + "\n");
-            if (declaredField.get(o) instanceof AbstractCollection) {
-                result.append(firstStart + declaredField.getName() + firstEnd);
-                result.append(serialize(declaredField.get(o)));
-            }
-            else {
-                result.append(firstStart + declaredField.getName() + firstEnd);
-                result.append("{\n");
-                result.append("\t" + serialize(declaredField.get(o)) + secondEnd + "\n");
-                result.append("}, \n");
-            }
-
-        }
-
+        Map map  = Serializer.getAllFieldsByMap(o);
+        result.append("{");
+        result.append(mapToJson(map, 0));
+        result.append("}");
         return result;
     }
 }
