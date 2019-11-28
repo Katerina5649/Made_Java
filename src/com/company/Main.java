@@ -1,7 +1,6 @@
 package com.company;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 
@@ -14,18 +13,13 @@ public class Main {
         serializer = new XmlSerializer();
         System.out.println("\n \n");
         System.out.println(serializer.serialize(person));
-
-
-        Integer[] arr = new Integer[]{1,2,3};
-        List list = Arrays.asList(arr);
-        int k = 0;
     }
 
     static class Person {
         private final String firstName;
         private final Address address;
         private final List<String> phoneNumbers;
-        private  final  Integer[] money;
+        private final Integer[] money;
 
         Person() {
             firstName = "Bob";

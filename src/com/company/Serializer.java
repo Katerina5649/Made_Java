@@ -4,11 +4,11 @@ import java.lang.reflect.Field;
 import java.util.*;
 
 public interface Serializer {
-    public  StringBuilder serialize(Object o) throws IllegalAccessException;
+    public StringBuilder serialize(Object o) throws IllegalAccessException;
 
-    public static boolean isPrimitive(Object o){
-        return  (o.getClass().isPrimitive() || (o instanceof Number) || (o instanceof Boolean)
-                || (o instanceof String)) ;
+    public static boolean isPrimitive(Object o) {
+        return (o.getClass().isPrimitive() || (o instanceof Number) || (o instanceof Boolean)
+                || (o instanceof String));
     }
 
     public static boolean isArray(Class<?> type) {
@@ -19,7 +19,7 @@ public interface Serializer {
     public static Map getAllFieldsByMap(Object o) throws IllegalAccessException {
         Map result = new HashMap();
 
-        if  (isArray(o.getClass())){
+        if (isArray(o.getClass())) {
             o = Arrays.asList((Object[]) o);
         }
         if (o instanceof AbstractCollection) {
@@ -41,15 +41,12 @@ public interface Serializer {
             declaredField.setAccessible(true);
             if (Serializer.isPrimitive(declaredField.get(o))) {
                 result.put(declaredField.getName(), declaredField.get(o).toString());
-            }
-            else {
+            } else {
                 result.put(declaredField.getName(), getAllFieldsByMap(declaredField.get(o)));
             }
         }
         return result;
     }
 
-    }
+}
 
-
-//type.componentType

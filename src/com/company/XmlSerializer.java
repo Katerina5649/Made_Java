@@ -17,7 +17,6 @@ public class XmlSerializer implements Serializer {
             } else {
                 result.append(tabs + "<" + e.getKey() + ">" + e.getValue().toString() + "</" + e.getKey() + ">" + "\n");
             }
-
         }
         return result;
     }
@@ -32,6 +31,5 @@ public class XmlSerializer implements Serializer {
         result.append("</" + className + ">\n");
         return result;
     }
-
 }
 
