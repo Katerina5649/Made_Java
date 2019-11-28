@@ -13,7 +13,7 @@ public class XmlSerializer implements Serializer {
             if (e.getValue() instanceof Map) {
                 result.append(tabs + "<" + e.getKey() + ">" + "\n");
                 result.append(this.mapToXml((Map<String, Object>) e.getValue(), tabsCount + 1));
-                result.append(tabs + "<" + e.getKey() + "/> \n");
+                result.append(tabs + "</" + e.getKey() + "> \n");
             } else {
                 result.append(tabs + "<" + e.getKey() + ">" + e.getValue().toString() + "</" + e.getKey() + ">" + "\n");
             }
