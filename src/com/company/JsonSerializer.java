@@ -1,8 +1,5 @@
 package com.company;
 
-import java.lang.reflect.Field;
-import java.util.AbstractCollection;
-import java.util.List;
 import java.util.Map;
 
 public class JsonSerializer implements Serializer {
@@ -12,13 +9,34 @@ public class JsonSerializer implements Serializer {
         StringBuilder tabs = new StringBuilder("");
         for (int i = 0; i < tabsCount; i++ )
             tabs.append("\t");
+
         for (Map.Entry<String, Object> e : map.entrySet()) {
+            result.append(tabs + e.getKey());
+            result.append(" : ");
             if (e.getValue() instanceof Map) {
-                result.append( e.getKey() + " : {" + "\n");
+                Map<String, Object>  imaginaryMap = (Map) e.getValue();
+                if (imaginaryMap.containsKey("0")){
+                    result.append( "[" + "\n");
+                    tabs.append("\t");
+                    tabsCount++;
+                    for (Object m : imaginaryMap.values()) {
+                        if (m instanceof Map) {
+                            result.append(tabs);
+                            result.append(mapToJson((Map<String, Object>) m, tabsCount+1));
+                        } else {
+                            result.append(tabs + m.toString() +  ",\n");
+                        }
+
+                    }
+                    result.append("]\n");
+                    return result;
+                }
+
+                result.append(  "{" + "\n");
                 result.append(mapToJson((Map<String, Object>) e.getValue(), tabsCount+1));
                 result.append("}\n");
             } else {
-                result.append(tabs  + e.getKey() + " : " + e.getValue().toString() +  "\n");
+                result.append(  e.getValue().toString() +  "\n");
             }
 
         }
@@ -28,7 +46,7 @@ public class JsonSerializer implements Serializer {
     public StringBuilder serialize(Object o) throws IllegalAccessException {
         StringBuilder result = new StringBuilder("");
         Map map  = Serializer.getAllFieldsByMap(o);
-        result.append("{");
+        result.append("{\n");
         result.append(mapToJson(map, 0));
         result.append("}");
         return result;
