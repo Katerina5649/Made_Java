@@ -18,8 +18,9 @@ public interface Serializer {
 
     public static Map getAllFieldsByMap(Object o) throws IllegalAccessException {
         Map result = new HashMap();
+
         if  (isArray(o.getClass())){
-            o = (Object[]) o;
+            o = Arrays.asList((Object[]) o);
         }
         if (o instanceof AbstractCollection) {
             int i = 0;
