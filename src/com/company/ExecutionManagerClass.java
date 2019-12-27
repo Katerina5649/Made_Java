@@ -6,40 +6,31 @@ import java.util.Date;
 public class ExecutionManagerClass implements ExecutionManager {
     @Override
     public Context execute(Runnable... tasks) {
+        ContextClass context = new ContextClass();
         ArrayList<Thread> threadList = new ArrayList<>();
+
         //Создаю для каждой таски свой поток
         for (Runnable task : tasks) {
-            Thread thread = new Thread(task);
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Date date = new Date();
+                        task.run();
+                        context.addTimeToStatistic((int) ((new Date()).getTime() - date.getTime()));
+                        context.incCompletedCount();
+                    } catch (Exception e) {
+                        context.incFailedCount();
+                    }
+                }
+            });
+            context.addThreadToList(thread);
             threadList.add(thread);
         }
 
-        ContextClass context = new ContextClass(threadList);
         //запускаю
         for (Thread thread : threadList) {
-            try {
-                Date date = new Date();
-                thread.start();
-                Thread waitThread = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            thread.join();
-                            context.incCompletedCount();
-                            context.addTimeToStatistic((int) ((new Date()).getTime() - date.getTime()));
-                        } catch (Exception e) {
-                           System.out.println("this is exception");
-                        }
-
-                    }
-                });
-                waitThread.start();
-
-
-
-            } catch (Exception e) {
-                System.out.println("I caught error");
-                context.incFailedCount();
-            }
+            thread.start();
         }
 
         context.doCallBack();

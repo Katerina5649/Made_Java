@@ -3,14 +3,15 @@ package com.company;
 import java.util.ArrayList;
 
 public class ContextClass implements Context {
-    private final ArrayList<Thread> threadList;
+    private ArrayList<Thread> threadList;
     private boolean isInterrupted = false;
     private int completedCount = 0;
     private int failedCount = 0;
     private Runnable callBack = null;
-    private ExecutionStatisticsClass executionStatistics;
+    private Thread callBackThread = null;
+    private ExecutionStatisticsClass executionStatistics = new ExecutionStatisticsClass();
 
-    public  void addTimeToStatistic(int time){
+    public void addTimeToStatistic(int time) {
         executionStatistics.addTimeToStatistic(time);
     }
 
@@ -25,17 +26,27 @@ public class ContextClass implements Context {
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
-                            if (callBack != null) {
-                                callBack.run();
-                            }
+
+                        }
+                        if (callBack != null) {
+                            callBack.run();
                         }
                     }
                 }
         );
+
+        callBackThread = thread;
         thread.start();
 
     }
 
+    ContextClass() {
+        threadList = new ArrayList<>();
+    }
+
+    void addThreadToList(Thread thread) {
+        threadList.add(thread);
+    }
 
     ContextClass(ArrayList<Thread> threadList) {
         this.threadList = threadList;
@@ -49,8 +60,6 @@ public class ContextClass implements Context {
     public void incCompletedCount() {
         this.completedCount++;
     }
-
-    ;
 
     //возвращает количество тасков, которые на текущий момент успешно выполнились.
     @Override
@@ -66,12 +75,13 @@ public class ContextClass implements Context {
 
     //отменяет выполнения тасков, которые еще не начали выполняться.
     @Override
-    //todo
     public void interrupt() {
         this.isInterrupted = true;
         for (Thread task : threadList) {
             task.stop();
         }
+        if (callBackThread != null)
+            callBackThread.stop();
     }
 
     //возвращает количество тасков, которые не были выполнены из-за отмены (вызовом предыдущего метода).
@@ -106,10 +116,20 @@ public class ContextClass implements Context {
     //блокирует текущий поток, из которого произошел вызов, до тех пор пока не выполнятся все задачи.
     @Override
     public void awaitTermination() throws InterruptedException {
-        Thread currentThread = Thread.currentThread();
-        while((this.failedCount + this.completedCount != threadList.size()) && (!isInterrupted)){
-            currentThread.wait();
-        }
+        for (Thread thread : threadList)
+            thread.join();
 
+        if (callBackThread != null)
+            callBackThread.join();
     }
 }
+
+
+
+
+
+
+
+
+
+

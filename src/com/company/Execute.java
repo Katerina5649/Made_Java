@@ -1,7 +1,10 @@
 package com.company;
 
+import java.util.ArrayList;
+
 class Execute implements Runnable {
     String name;
+    ArrayList<Integer> list;
 
     Execute(String name) {
         this.name = name;
@@ -12,18 +15,18 @@ class Execute implements Runnable {
         System.out.println(name + " start");
         Thread thread = Thread.currentThread();
         try {
-            thread.sleep(10000);
+            thread.sleep(1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
-        if (name.equals("error")){
-            try {
-                throw new Exception("error");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        if (name.equals("error")) {
+            //будет NullPointerException
+            list.add(0);
+
+        } else {
+            System.out.println(name + " finished");
         }
-        System.out.println(name + " finished");
+
     }
 }

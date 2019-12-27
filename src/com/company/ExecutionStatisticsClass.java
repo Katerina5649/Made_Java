@@ -1,16 +1,20 @@
 package com.company;
 
-public class ExecutionStatisticsClass implements  ExecutionStatistics {
-    private int minExecutionTimeInMs = 0 , maxExecutionTimeInMs = 0 , averageExecutionTimeInMs = 0;
+public class ExecutionStatisticsClass implements ExecutionStatistics {
+    private int minExecutionTimeInMs = 0, maxExecutionTimeInMs = 0, averageExecutionTimeInMs = 0;
     private int dataSize = 0;
 
 
-    public void addTimeToStatistic(int time){
-        minExecutionTimeInMs = Math.min(minExecutionTimeInMs , time);
-        maxExecutionTimeInMs = Math.max(maxExecutionTimeInMs , time);
+    public void addTimeToStatistic(int time) {
+        minExecutionTimeInMs = Math.min(minExecutionTimeInMs, time);
+        maxExecutionTimeInMs = Math.max(maxExecutionTimeInMs, time);
         averageExecutionTimeInMs += time;
-        dataSize ++;
+        if (minExecutionTimeInMs == 0) {
+            minExecutionTimeInMs = time;
+        }
+        dataSize++;
     }
+
     @Override
     public int getMinExecutionTimeInMs() {
         return minExecutionTimeInMs;
@@ -23,6 +27,6 @@ public class ExecutionStatisticsClass implements  ExecutionStatistics {
 
     @Override
     public int getAverageExecutionTimeInMs() {
-        return averageExecutionTimeInMs / dataSize;
+        return averageExecutionTimeInMs;
     }
 }
